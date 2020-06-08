@@ -1,0 +1,23 @@
+{
+  "name": "tinder-bot",
+  "version": "1.0.0",
+  "description": "Javascript Puppeteer Tinder bot 😈🔥",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Destroy-Youth/tinder-bot.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Destroy-Youth/tinder-bot/issues"
+  },
+  "homepage": "https://github.com/Destroy-Youth/tinder-bot#readme",
+  "dependencies": {
+    "puppeteer": "^3.3.0"
+  }
+}
