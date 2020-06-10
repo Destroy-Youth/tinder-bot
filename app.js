@@ -3,7 +3,7 @@ const location = require('./resources/location');
 const { user, password } = require('./resources/credentials');
 const openingLines = require('./resources/openingLines');
 
-(async () => {
+const tinderPage = async () => {
   const browser = await puppeteer.launch({ headless: false });
   const page = await browser.newPage();
   await page.goto('https://tinder.com/');
@@ -13,6 +13,10 @@ const openingLines = require('./resources/openingLines');
   await context.overridePermissions('https://tinder.com', ['geolocation']);
   await page.setGeolocation(location);
 
+  return [page, browser];
+};
+
+const login = async (page) => {
   await page.waitForXPath(
     '//*[@id="content"]/div/div[2]/div/div/div[1]/button'
   );
@@ -43,12 +47,10 @@ const openingLines = require('./resources/openingLines');
   await popup.keyboard.type(password);
   await popup.waitForSelector('#loginbutton');
   await popup.click('#loginbutton');
+};
 
-  await page.waitFor(5000);
-  console.log('ya esperé');
-
+const rngCupid = async (page, browser) => {
   page.mainFrame();
-
   // Wait for the profile card
   await page.waitForXPath(
     '//*[@id="content"]/div/div[1]/div/main/div[1]/div/div/div[1]/div/div[1]/div[3]/div[1]/div[1]/div/div[1]/div/div'
@@ -74,27 +76,47 @@ const openingLines = require('./resources/openingLines');
   let i = 0;
   do {
     await page.waitFor(5000);
+
     if (Math.floor(Math.random() * 10 + 1) > 6) {
       await dislike.click();
     } else {
       await like.click();
     }
+    console.log('slides: ', i);
 
-    const [goBackToTinder] = await page.$x(
-      '//*[@id="modal-manager-canvas"]/div/div/div[1]/div/div[2]/a'
-    );
-    console.log(goBackToTinder);
+    const totalPages = await browser.pages();
+    console.log('totalPages: ', totalPages);
 
-    if (goBackToTinder) {
-      console.log('it is a match');
-
-      const [sayHelloInput] = await page.$x('//*[@id="chat-text-area"]');
-      sayHelloInput.keyboard.type(
-        openingLines[Math.floor(Math.random() * items.length)]
-      );
-      goBackToTinder.click();
+    console.log('pages: ', totalPages.length);
+    if (totalPages > 2) {
+      closePopup(totalPages[totalPages.length - 1]);
     }
 
     i++;
-  } while (i < 10);
+  } while (true);
+};
+
+const closePopup = async (page) => {
+  console.log('it is a match');
+
+  const [goBackToTinder] = await page.$x(
+    '//*[@id="modal-manager-canvas"]/div/div/div[1]/div/div[2]/a'
+  );
+  const [sayHelloInput] = await matchWindow.$x('//*[@id="chat-text-area"]');
+  sayHelloInput.keyboard.type(
+    openingLines[Math.floor(Math.random() * items.length)]
+  );
+  goBackToTinder.click();
+};
+
+(async () => {
+  try {
+    const [page, browser] = await tinderPage();
+    await login(page);
+
+    await page.waitFor(5000);
+    rngCupid(page, browser);
+  } catch (error) {
+    console.log(error);
+  }
 })();
