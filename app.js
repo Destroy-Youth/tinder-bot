@@ -49,13 +49,7 @@ const login = async (page) => {
   await popup.click('#loginbutton');
 };
 
-const rngCupid = async (page, browser) => {
-  page.mainFrame();
-  // Wait for the profile card
-  await page.waitForXPath(
-    '//*[@id="content"]/div/div[1]/div/main/div[1]/div/div/div[1]/div/div[1]/div[3]/div[1]/div[1]/div/div[1]/div/div'
-  );
-
+const like = async (page) => {
   // like
   await page.waitForXPath(
     '//*[@id="content"]/div/div[1]/div/main/div[1]/div/div/div[1]/div/div[2]/div[4]/button'
@@ -64,6 +58,10 @@ const rngCupid = async (page, browser) => {
     '//*[@id="content"]/div/div[1]/div/main/div[1]/div/div/div[1]/div/div[2]/div[4]/button'
   );
 
+  await like.click();
+};
+
+const dislike = async (page) => {
   // dislike
   await page.waitForXPath(
     '//*[@id="content"]/div/div[1]/div/main/div[1]/div/div/div[1]/div/div[2]/div[2]/button'
@@ -72,15 +70,25 @@ const rngCupid = async (page, browser) => {
     '//*[@id="content"]/div/div[1]/div/main/div[1]/div/div/div[1]/div/div[2]/div[2]/button'
   );
 
+  await dislike.click();
+};
+
+const rngCupid = async (page, browser) => {
+  page.mainFrame();
+  // Wait for the profile card
+  await page.waitForXPath(
+    '//*[@id="content"]/div/div[1]/div/main/div[1]/div/div/div[1]/div/div[1]/div[3]/div[1]/div[1]/div/div[1]/div/div'
+  );
+
   // RNG cupid
   let i = 0;
   do {
     await page.waitFor(5000);
 
     if (Math.floor(Math.random() * 10 + 1) > 6) {
-      await dislike.click();
+      await dislike(page);
     } else {
-      await like.click();
+      await like(page);
     }
     console.log('slides: ', i);
 
